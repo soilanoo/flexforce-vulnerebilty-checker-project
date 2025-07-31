@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Vulnerability Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .scan-pulse {
+            animation: pulse 2s infinite;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            padding: 4px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <!-- Header with Banner -->
+            <div class="bg-gradient-to-r from-indigo-900 to-black p-6 text-center">
+                <h1 class="text-5xl font-black text-white tracking-tight">FLEX FORCE SECURITY</h1>
+                <p class="text-indigo-200 mt-2 text-lg font-mono">AI-Powered Vulnerability Scanner v1.0</p>
+                <div class="mt-4 flex justify-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5f390e72-7478-4d42-b6e4-7274b49529d2.png" alt="Advanced security scanning interface with digital protection shields" class="rounded-lg shadow-xl border-2 border-blue-400" />
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="p-6">
+                <!-- Target Input Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Scan Configuration</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="target" class="block text-sm font-medium text-gray-700 mb-1">Target:</label>
+                            <input type="text" id="target" placeholder="Enter IP or domain" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="scan-type" class="block text-sm font-medium text-gray-700 mb-1">Scan Type:</label>
+                            <select id="scan-type" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="quick">Quick Scan</option>
+                                <option value="full">Full Scan</option>
+                                <option value="custom">Custom Scan</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Menu -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Security Tools</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- NMAP Card -->
+                        <div class="bg-gradient-to-b from-white to-gray-100 border border-gray-300 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1" 
+                             onclick="runNmap()">
+                            <div class="flex items-center mb-3">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0e357d22-5914-4d55-884b-30f169d9675e.png" alt="Nmap network scanning tool icon" class="w-12 h-12 mr-3 rounded-full bg-blue-50 p-2 border border-blue-200" />
+                                <h3 class="font-medium">Nmap Scan</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Network mapping and port scanning</p>
+                            <div class="tooltip mt-2">
+                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Click to run</span>
+                                <span class="tooltiptext">Performs network discovery and security auditing</span>
+                            </div>
+                        </div>
+
+                        <!-- WhatWeb Card -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" 
+                             onclick="runWhatWeb()">
+                            <div class="flex items-center mb-3">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ebb4401b-0665-456c-a7c9-32728c201143.png" alt="WhatWeb website scanner icon" class="w-10 h-10 mr-3" />
+                                <h3 class="font-medium">WhatWeb</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Website technology detection</p>
+                            <div class="tooltip mt-2">
+                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Click to run</span>
+                                <span class="tooltiptext">Identifies web technologies in use</span>
+                            </div>
+                        </div>
+
+                        <!-- DNSRecon Card -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" 
+                             onclick="runDNSRecon()">
+                            <div class="flex items-center mb-3">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4391b6f6-4b86-45c8-a0d2-40f3f1777b77.png" alt="DNSRecon domain research tool icon" class="w-10 h-10 mr-3" />
+                                <h3 class="font-medium">DNSRecon</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">DNS enumeration and research</p>
+                            <div class="tooltip mt-2">
+                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Click to run</span>
+                                <span class="tooltiptext">Gathers DNS intelligence data</span>
+                            </div>
+                        </div>
+
+                        <!-- Drib Card -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" 
+                             onclick="runDrib()">
+                            <div class="flex items-center mb-3">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3b2b6fad-dd28-46a2-a14c-6d611f96fe8a.png" alt="Drib reconnaissance tool icon" class="w-10 h-10 mr-3" />
+                                <h3 class="font-medium">Drib</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">Domain reconnaissance</p>
+                            <div class="tooltip mt-2">
+                                <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Click to run</span>
+                                <span class="tooltiptext">Comprehensive domain information gathering</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Analysis Section -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">AI Analysis Engine</h2>
+                        <button onclick="runAIAnalysis()" class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-200 shadow-lg transition-all">
+                            Run AI Analysis
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ed2de7a8-7e5c-4817-ac12-5511bd932e7c.png" alt="AI processing icon" class="w-6 h-6 mr-2" />
+                            <span class="font-medium">Threat Intelligence Insights</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">AI-powered vulnerability detection and recommendations</p>
+                        <div id="ai-analysis-result" class="bg-white p-3 rounded-md border border-gray-200">
+                            <div class="text-center py-4">
+                                <div class="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full">
+                                    <div class="w-4 h-4 mr-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                    <span class="text-blue-700 font-medium">Waiting for scan data...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results and Logs -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Scan Output</h2>
+                    <div class="bg-black text-green-400 p-4 rounded-lg h-80 overflow-y-auto font-mono text-sm border border-green-500/20 bg-gradient-to-b from-gray-900/80 to-black">
+                        <div id="scan-output">
+                            <p class="text-green-400 log-entry">[System] Scanner ready. Select a tool above to begin.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end space-x-3">
+                        <button onclick="clearOutput()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            Clear Output
+                        </button>
+                        <button onclick="saveResults()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Save Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to add output messages
+        function addOutput(message, type = 'info') {
+            const outputDiv = document.getElementById('scan-output');
+            const entry = document.createElement('p');
+            entry.className = `log-entry ${type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : 'text-gray-300'}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            outputDiv.appendChild(entry);
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+
+        // Display banner when loading specific tools
+        function showBanner(tool) {
+            addOutput(`Running ${tool} scan...`, 'info');
+            addOutput('------------------------------------------', 'info');
+            addOutput('Vulnerability Scanning Tool', 'success');
+            addOutput('Created by FLEX FORCE', 'success');
+            addOutput('------------------------------------------', 'info');
+        }
+
+        // Tool functions
+        function runNmap() {
+            const target = document.getElementById('target').value;
+            if (!target) {
+                addOutput('Please enter a target first', 'error');
+                return;
+            }
+
+            showBanner('Nmap');
+            addOutput(`Scanning ${target} with Nmap...`, 'info');
+            
+            // Simulate scan progress (in a real app this would call backend)
+            setTimeout(() => {
+                // addOutput('Port 80/tcp open: http (Apache/2.4.41)', 'success');
+                // addOutput('Port 22/tcp open: ssh (OpenSSH 7.6p1)', 'success');
+                // addOutput('Port 443/tcp open: https (TLSv1.2)', 'success');
+                // addOutput('Nmap scan completed successfully', 'success');
+                addOutput('pritam', 'success'); 
+                addOutput('pritam'); 
+            }, 1500);
+        }
+
+        function runWhatWeb() {
+            const target = document.getElementById('target').value;
+            if (!target) {
+                addOutput('Please enter a target first', 'error');
+                return;
+            }
+
+            showBanner('WhatWeb');
+            addOutput(`Scanning ${target} with WhatWeb...`, 'info');
+            
+            // Simulate scan progress
+            setTimeout(() => {
+                addOutput('HTTPServer: Apache/2.4.41', 'success');
+                addOutput('X-Powered-By: PHP/7.4.3', 'success');
+                addOutput('JQuery: 3.4.1', 'success');
+                addOutput('WhatWeb scan completed successfully', 'success');
+            }, 1500);
+        }
+
+        function runDNSRecon() {
+            const target = document.getElementById('target').value;
+            if (!target) {
+                addOutput('Please enter a target first', 'error');
+                return;
+            }
+
+            showBanner('DNSRecon');
+            addOutput(`Scanning ${target} with DNSRecon...`, 'info');
+            
+            // Simulate scan progress
+            setTimeout(() => {
+                addOutput('NS: ns1.example.com 192.168.1.1', 'success');
+                addOutput('MX: mail.example.com 10.0.0.1', 'success');
+                addOutput('CNAME: www -> example.com', 'success');
+                addOutput('DNSRecon scan completed successfully', 'success');
+            }, 1500);
+        }
+
+        function runDrib() {
+            const target = document.getElementById('target').value;
+            if (!target) {
+                addOutput('Please enter a target first', 'error');
+                return;
+            }
+
+            showBanner('Drib');
+            addOutput(`Scanning ${target} with Drib...`, 'info');
+            
+            // Simulate scan progress
+            setTimeout(() => {
+                addOutput('Registered on: 2020-01-15', 'success');
+                addOutput('Registrar: GoDaddy', 'success');
+                addOutput('DNS Records: 4 found', 'success');
+                addOutput('Drib scan completed successfully', 'success');
+            }, 1500);
+        }
+
+        function runAIAnalysis() {
+            const outputDiv = document.querySelector('#ai-analysis-result');
+            outputDiv.innerHTML = '<p class="text-gray-600 scan-pulse">Analyzing results with AI engine...</p>';
+            
+            // Simulate AI analysis
+            setTimeout(() => {
+                outputDiv.innerHTML = `
+                    <div>
+                        <h4 class="font-medium mb-2">AI Threat Assessment</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li>Medium risk detected: Outdated Apache version (2.4.41)</li>
+                            <li>Medium risk detected: WordPress 5.5.1 (latest is 5.9)</li>
+                            <li>Low risk detected: OpenSSH 7.6p1 (consider upgrading)</li>
+                        </ul>
+                        <div class="mt-3 bg-yellow-50 border-l-4 border-yellow-400 p-2">
+                            <p class="text-yellow-700 text-sm"><strong>Recommendation:</strong> Update Apache and WordPress to latest versions to mitigate security risks.</p>
+                        </div>
+                    </div>
+                `;
+                addOutput('AI analysis completed. Results shown in analysis panel.', 'success');
+            }, 2000);
+        }
+
+        function clearOutput() {
+            document.getElementById('scan-output').innerHTML = '';
+            addOutput('Output cleared. Ready for new scans.', 'info');
+        }
+
+        function saveResults() {
+            addOutput('Results saved to scan_report.txt', 'success');
+        }
+
+        // Initialize with some sample data if target is empty
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('target').value = 'example.com';
+        });
+    </script>
+</body>
+</html>
